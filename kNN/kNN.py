@@ -24,12 +24,13 @@ class kNN(object):
         self.means = np.array(col_means)
         self.stds = np.array(col_stds)
 
-    # k is arbitrarily set here
-    def predict(self, test_data, k=2):
+    # k is arbitrarily set here if not provided
+    def predict(self, test_data, k=3):
         # Setup
         # standardize test data based off of training means and stdevs
         standardized_test_data = np.array([(x - self.means) / self.stds for x in test_data])
         test_results = []
+        print("Predicting targets on {} items using kNN with k at {}".format(len(test_data), k))
 
         for test_item in standardized_test_data:
             NN_sums = []
@@ -60,8 +61,7 @@ class kNN(object):
                             test_results.append(NN_results[x])
                             break
                     else:
-                        # We should never reach here, 0 is completely arbitrary
+                        # We should hopefully not reach here, 0 is completely arbitrary
                         test_results.append(0)
 
-        print(np.array(test_results))
         return np.array(test_results)

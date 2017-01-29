@@ -5,30 +5,6 @@ import Dataset as ds
 
 
 # IDEAS: split 3 way, add the validation thing?
-# We'll work with this for now, but we'll have to read from file
-def load_dataset():
-    # Setting up the data from csv & cleaning
-    csv = np.genfromtxt('iris.csv', dtype=str, delimiter=",")
-    for x in range(len(csv)):
-        for y in range(len(csv[x])):
-            csv[x][y] = csv[x][y].replace("\"", "")
-
-    dataset = ds.Dataset(feature_names=csv[:1, 1:5],
-                         target_names=np.array(set(csv[1:, 5:6].flatten())),
-                         data=csv[1:, 1:5].astype(np.float),
-                         target=csv[1:, 5:6])
-
-    for index in range(len(dataset.target)):
-        if dataset.target[index] == 'setosa':
-            dataset.target[index] = 0
-        elif dataset.target[index] == 'versicolor':
-            dataset.target[index] = 1
-        elif dataset.target[index] == 'virginica':
-            dataset.target[index] = 2
-    dataset.target = dataset.target.flatten().astype(np.int)
-
-    return dataset
-
 
 def randomize_dataset(dataset):
     # This syntax is off the internet, I've no idea what the sytnax
@@ -57,7 +33,9 @@ def report_accuracy(test_results, test_targets):
 
 def main(argv):
     # Load
-    dataset = load_dataset()
+    dataset = ds.Dataset()
+    # dataset.load_dataset_from_iris_csv('iris.csv')
+    dataset.load_from_txts_if_categorical('car.names.txt', 'car.data.txt')
 
     randomize_dataset(dataset)
     training_data, test_data, training_targets, test_targets = split_dataset(dataset)
@@ -66,11 +44,19 @@ def main(argv):
     classifier = clsfr.kNN()
     classifier.train(training_data, training_targets)
 
-    test_results = classifier.predict(test_data, k=8)
+    # I tried lots of k's. 3 seems good.
+    test_results = classifier.predict(test_data, k=3)
 
     # How did we do?
     report_accuracy(test_results, test_targets)
 
+    # Experiment zone!
+    # cars = ds.Dataset()
+    # cars.load_from_txts_if_categorical('car.names.txt', 'car.data.txt')
+
+
+    # iris = ds.Dataset()
+    # iris.load_from_txts_if_numerical('iris.names.txt', 'iris.data.txt')
 
     return 0
 
