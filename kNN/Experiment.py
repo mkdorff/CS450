@@ -52,8 +52,7 @@ def report_accuracy(test_results, test_targets):
         if test_results[i] == test_targets[i]:
             correct += 1
     percentage = round(correct / len(test_results), 2) * 100
-    return percentage
-    # print("Predicting targets at {}% accuracy".format(percentage))
+    print("Predicting targets at {}% accuracy".format(percentage))
 
 
 def main(argv):
@@ -63,13 +62,14 @@ def main(argv):
     randomize_dataset(dataset)
     training_data, test_data, training_targets, test_targets = split_dataset(dataset)
 
-    # Train, predict. Only change would be class
-    classifier = clsfr.kNN(training_data, training_targets)
+    # Train, predict
+    classifier = clsfr.kNN()
+    classifier.train(training_data, training_targets)
 
-    test_results = classifier.predict(test_data)
+    test_results = classifier.predict(test_data, k=8)
 
     # How did we do?
-    accuracy = report_accuracy(test_results, test_targets)
+    report_accuracy(test_results, test_targets)
 
 
     return 0
