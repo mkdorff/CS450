@@ -2,7 +2,7 @@ import numpy as np
 
 
 class kNN(object):
-    """ A basic classifier that doesn't doesn't do too much """
+    """ Find the neighbors! """
 
     # Let's explicitly 'train' our classifier
     def train(self, training_data, training_targets):
@@ -38,7 +38,8 @@ class kNN(object):
                 sum = np.sum((training_row - test_item) ** 2)
                 NN_sums.append(sum)
 
-            NN_results = self.training_targets[np.array(NN_sums).argsort()[:k]]
+            NN_sums_sorted = np.array(NN_sums).argsort()
+            NN_results = self.training_targets[NN_sums_sorted[:k]]
             # apparently only works with ints, but I'll format results to ints
             items, freq = np.unique(NN_results, return_counts=True)
             NN_freq = np.asarray((items, freq)) # Tranpose?
@@ -48,20 +49,33 @@ class kNN(object):
                 test_results.append(NN_freq[0][0])
             else:
                 # this will stay a 2D array, man this is ugly
-                sort = NN_freq[1].argsort()[-2:]
+                sort = NN_freq[1].argsort()[-(len(NN_freq)-1):]
                 NN_freq[0] = NN_freq[0][sort]
                 NN_freq[1] = NN_freq[1][sort]
 
-                mxidx = len(NN_freq) - 1
+                mxidx = len(NN_freq[1]) - 1
                 if NN_freq[1][mxidx] > NN_freq[1][mxidx - 1]:
                     test_results.append(NN_freq[0][mxidx])
                 else:
-                    for x in NN_results:
-                        if NN_results[x] == NN_freq[0][mxidx] or NN_results[x] == NN_freq[0][mxidx - 1]:
-                            test_results.append(NN_results[x])
-                            break
-                    else:
-                        # We should hopefully not reach here, 0 is completely arbitrary
-                        test_results.append(0)
+                    test_results.append(self.predict_one(test_item, NN_sums_sorted, k-1))
 
         return np.array(test_results)
+
+    # Recursive decreasing k algorithm
+    def predict_one(self, test_item, sums, k):
+        NN_results = self.training_targets[sums[:k]]
+        items, freq = np.unique(NN_results, return_counts=True)
+        NN_freq = np.asarray((items, freq))
+
+        if k == 1 or len(NN_freq[0]) == 1:
+            return NN_results[0]
+
+        sort = NN_freq[1].argsort()[-(len(NN_freq) - 1):]
+        NN_freq[0] = NN_freq[0][sort]
+        NN_freq[1] = NN_freq[1][sort]
+        mxidx = len(NN_freq[1]) - 1
+
+        if NN_freq[1][mxidx] > NN_freq[1][mxidx - 1]:
+            return NN_freq[0][mxidx]
+        else:
+            return self.predict_one(test_item, sums, k-1)

@@ -42,7 +42,6 @@ class Dataset(object):
             cat_value = 0
             feature = {}
             for nd_cat in np.unique(nd_feature):
-                # cat = str(nd_cat)
                 feature[str(nd_cat)] = cat_value
                 cat_value += 1
             feature_key[feature_num] = feature
@@ -55,13 +54,31 @@ class Dataset(object):
             for x in range(len(raw_data[y])):
                 raw_data[y][x] = feature_key[y][str(raw_data[y][x])]
 
-        self.data = raw_data[:len(raw_data) - 1].T.astype(np.int)
-        self.target = raw_data[len(raw_data) - 1:].T.astype(np.int)
+        self.data = raw_data[:len(raw_data) - 1].T.astype(np.float)
+        self.target = raw_data[len(raw_data) - 1:].T.astype(np.float).flatten()
 
-        return 0
 
+    # This kind of is still specific to iris dataset :/
     def load_from_txts_if_numerical(self, names_file, data_file):
-        return 0
+        with open(names_file) as f:
+            self.DESCR = f.readlines()
+
+        raw_data = np.genfromtxt(data_file, dtype=str, delimiter=',')
+
+        self.data = raw_data[:, :len(raw_data[0])-1].astype(np.float)
+
+        raw_targets = raw_data[:, len(raw_data[0]) - 1:]
+        target_key = {}
+        target_num = 0
+        for nd_target in np.unique(raw_targets):
+            target_key[str(nd_target)] = target_num
+            target_num += 1
+
+        for x in range(len(raw_targets)):
+            raw_targets[x] = target_key[raw_targets[x][0]]
+
+        self.target = raw_targets.astype(np.float).flatten()
+
 
     def load_dataset_from_iris_csv(self, csv_file):
         csv = np.genfromtxt(csv_file, dtype=str, delimiter=",")

@@ -36,6 +36,7 @@ def main(argv):
     dataset = ds.Dataset()
     # dataset.load_dataset_from_iris_csv('iris.csv')
     dataset.load_from_txts_if_categorical('car.names.txt', 'car.data.txt')
+    # dataset.load_from_txts_if_numerical('iris.names.txt', 'iris.data.txt')
 
     randomize_dataset(dataset)
     training_data, test_data, training_targets, test_targets = split_dataset(dataset)
@@ -44,19 +45,11 @@ def main(argv):
     classifier = clsfr.kNN()
     classifier.train(training_data, training_targets)
 
-    # I tried lots of k's. 3 seems good.
-    test_results = classifier.predict(test_data, k=3)
+    # I tried lots of k's.
+    test_results = classifier.predict(test_data, k=4)
 
     # How did we do?
     report_accuracy(test_results, test_targets)
-
-    # Experiment zone!
-    # cars = ds.Dataset()
-    # cars.load_from_txts_if_categorical('car.names.txt', 'car.data.txt')
-
-
-    # iris = ds.Dataset()
-    # iris.load_from_txts_if_numerical('iris.names.txt', 'iris.data.txt')
 
     return 0
 
