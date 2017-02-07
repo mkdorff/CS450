@@ -42,14 +42,14 @@ class kNN(object):
             NN_results = self.training_targets[NN_sums_sorted[:k]]
             # apparently only works with ints, but I'll format results to ints
             items, freq = np.unique(NN_results, return_counts=True)
-            NN_freq = np.asarray((items, freq)) # Tranpose?
+            NN_freq = np.asarray((items, freq))  # Tranpose?
 
             # simplest case first
             if len(NN_freq[0]) == 1:
                 test_results.append(NN_freq[0][0])
             else:
                 # this will stay a 2D array, man this is ugly
-                sort = NN_freq[1].argsort()[-(len(NN_freq)-1):]
+                sort = NN_freq[1].argsort()[-(len(NN_freq) - 1):]
                 NN_freq[0] = NN_freq[0][sort]
                 NN_freq[1] = NN_freq[1][sort]
 
@@ -57,7 +57,7 @@ class kNN(object):
                 if NN_freq[1][mxidx] > NN_freq[1][mxidx - 1]:
                     test_results.append(NN_freq[0][mxidx])
                 else:
-                    test_results.append(self.predict_one(test_item, NN_sums_sorted, k-1))
+                    test_results.append(self.predict_one(test_item, NN_sums_sorted, k - 1))
 
         return np.array(test_results)
 
@@ -78,4 +78,4 @@ class kNN(object):
         if NN_freq[1][mxidx] > NN_freq[1][mxidx - 1]:
             return NN_freq[0][mxidx]
         else:
-            return self.predict_one(test_item, sums, k-1)
+            return self.predict_one(test_item, sums, k - 1)
