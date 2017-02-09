@@ -15,7 +15,9 @@ class Node(object):
         if len(inputs) != self.input_count:
             raise IndexError("The number of weights does not match the number of inputs")
 
-        return 1 if np.dot(self.weights, inputs) > 0 else 0
+        self.output = 1 if np.dot(self.weights, inputs) > 0 else 0
+
+        return self.output
 
     def calculate_output_sigmoid(self):
         """ returns sigmoid for multi-layer stuff """

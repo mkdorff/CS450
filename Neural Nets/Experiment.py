@@ -32,38 +32,19 @@ def report_accuracy(test_results, test_targets):
 def main(argv):
     # Load
     dataset = ds.Dataset()
-    # dataset.load_dataset_from_iris_csv('iris.csv')
-    dataset.load_from_txts_if_numerical('iris.names.txt', 'iris.data.txt')
+    # dataset.load_from_txts_if_numerical('iris.names.txt', 'iris.data.txt')
+    dataset.load_from_txts_if_numerical('pima-indians-diabetes.names.txt', 'pima-indians-diabetes.data.txt')
 
     randomize_dataset(dataset)
     training_data, test_data, training_targets, test_targets = split_dataset(dataset)
 
     # Train, predict
     classifier = clsfr.NeuralNetwork(training_data, training_targets)
-    # classifier.fit(training_data, training_targets, dataset.target_count)
-
-    # print(classifier.network)
-    # print(classifier.network[0][1].weights)
-    # print(classifier.network[0][2].weights)
-
-
-    # print(classifier.training_data)
-    # print(classifier.training_targets)
+    classifier.create_network()
+    classifier.feed()
 
     # How did we do?
     # report_accuracy(test_results, test_targets)
-
-    # # Playground
-    # try:
-    #     nerrrds = node.Node([1, 2, 3], [0.2, -0.4, 0.5])
-    # except IndexError as e:
-    #     print(e)
-
-    # meow = [[]]
-    # meow[0] = [1,2,3]
-    # meow[1] = [1, 2, 3]
-
-    # print(meow)
 
     return 0
 
