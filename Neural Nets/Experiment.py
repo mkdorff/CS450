@@ -1,10 +1,8 @@
 import sys
 import numpy as np
-import kNN as clsfr
+import NeuralNetwork as clsfr
 import Dataset as ds
 
-
-# IDEAS: split 3 way, add the validation thing?
 
 def randomize_dataset(dataset):
     # This syntax is off the internet, I've no idea what the sytnax
@@ -35,21 +33,37 @@ def main(argv):
     # Load
     dataset = ds.Dataset()
     # dataset.load_dataset_from_iris_csv('iris.csv')
-    dataset.load_from_txts_if_categorical('car.names.txt', 'car.data.txt')
-    # dataset.load_from_txts_if_numerical('iris.names.txt', 'iris.data.txt')
+    dataset.load_from_txts_if_numerical('iris.names.txt', 'iris.data.txt')
 
     randomize_dataset(dataset)
     training_data, test_data, training_targets, test_targets = split_dataset(dataset)
 
     # Train, predict
-    classifier = clsfr.kNN()
-    classifier.train(training_data, training_targets)
+    classifier = clsfr.NeuralNetwork(training_data, training_targets)
+    # classifier.fit(training_data, training_targets, dataset.target_count)
 
-    # I tried lots of k's.
-    test_results = classifier.predict(test_data, k=4)
+    # print(classifier.network)
+    # print(classifier.network[0][1].weights)
+    # print(classifier.network[0][2].weights)
+
+
+    # print(classifier.training_data)
+    # print(classifier.training_targets)
 
     # How did we do?
-    report_accuracy(test_results, test_targets)
+    # report_accuracy(test_results, test_targets)
+
+    # # Playground
+    # try:
+    #     nerrrds = node.Node([1, 2, 3], [0.2, -0.4, 0.5])
+    # except IndexError as e:
+    #     print(e)
+
+    # meow = [[]]
+    # meow[0] = [1,2,3]
+    # meow[1] = [1, 2, 3]
+
+    # print(meow)
 
     return 0
 
