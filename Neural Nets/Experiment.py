@@ -3,6 +3,8 @@ import numpy as np
 import NeuralNetwork as clsfr
 import Dataset as ds
 
+import Node
+
 
 def randomize_dataset(dataset):
     # This syntax is off the internet, I've no idea what the sytnax
@@ -35,16 +37,19 @@ def main(argv):
     # dataset.load_from_txts_if_numerical('iris.names.txt', 'iris.data.txt')
     dataset.load_from_txts_if_numerical('pima-indians-diabetes.names.txt', 'pima-indians-diabetes.data.txt')
 
-    randomize_dataset(dataset)
-    training_data, test_data, training_targets, test_targets = split_dataset(dataset)
+    # randomize_dataset(dataset)
+    # training_data, test_data, training_targets, test_targets = split_dataset(dataset)
 
     # Train, predict
-    classifier = clsfr.NeuralNetwork(training_data, training_targets)
-    classifier.create_network()
-    classifier.feed()
+    # classifier = clsfr.NeuralNetwork(training_data, training_targets)
+    # classifier.create_network()
+    # classifier.feed()
 
     # How did we do?
     # report_accuracy(test_results, test_targets)
+
+    node = Node.Node(4)
+    print(node.weights)
 
     return 0
 
