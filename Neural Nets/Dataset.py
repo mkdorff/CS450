@@ -14,6 +14,7 @@ class Dataset(object):
         self.test_data = np.array([])
         self.training_targets = np.array([])
         self.test_targets = np.array([])
+        self.predicted_targets = np.array([])
         self.means = np.array([])
         self.standard_devs = np.array([])
 
@@ -50,6 +51,7 @@ class Dataset(object):
 
     def standardize_data(self):
         standardized_data = self.training_data.T
+        standardized_test_data = self.test_data.T
         col_means = []
         col_stds = []
 
@@ -58,8 +60,20 @@ class Dataset(object):
             col_stds.append(np.std(standardized_data[x]))
             standardized_data[x] = [(el - col_means[x]) / col_stds[x] for el in standardized_data[x]]
 
+        for x in range(len(standardized_test_data)):
+            standardized_test_data[x] = [(el - col_means[x]) / col_stds[x] for el in standardized_test_data[x]]
+
         self.training_data = standardized_data.T
+        self.test_data = standardized_test_data.T
         self.means = np.array(col_means)
         self.standard_devs = np.array(col_stds)
         self.input_count = self.training_data.shape[1]
         self.target_count = len(np.unique(self.training_targets))
+
+    def report_accuracy(self):
+        correct = 0
+        for i in range(len(self.test_targets)):
+            if self.test_targets[i] == self.predicted_targets[i]:
+                correct += 1
+        percentage = round(correct / len(self.test_targets), 2) * 100
+        print("Predicting targets at {}% accuracy".format(percentage))

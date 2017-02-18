@@ -35,7 +35,7 @@ class NeuralNetwork(object):
                 else:
                     node.calculate_output([-1] + working_inputs)
 
-            working_inputs = []
+            working_inputs.clear()
             for node in self.network[layer].nodes:
                 working_inputs.append(node.value)
 
@@ -43,16 +43,26 @@ class NeuralNetwork(object):
         for row in dataset.training_data:
             self.compute_results(row)
 
-            for node in self.network[len(self.network) - 1].nodes:
-                print(node.value)
-
-            print()
+            # for node in self.network[len(self.network) - 1].nodes:
+            #     print(node.value)
+            #
+            # print()
 
     def train(self):
         # train and update weights
         return 0
 
-    def predict(self, test_data):
-        # standardize test data before predicting!
-        test_results = [1 for x in range(len(test_data))]
-        return np.array(test_results)
+    def predict(self, dataset):
+        output = []
+        predicted_target = []
+
+        for row in dataset.test_data:
+            self.compute_results(row)
+
+            for node in self.network[len(self.network) - 1].nodes:
+                output.append(node.value)
+
+            predicted_target.append(output.index(max(output)))
+            output.clear()
+
+        dataset.predicted_targets = np.array(predicted_target)
