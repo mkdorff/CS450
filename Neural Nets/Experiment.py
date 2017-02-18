@@ -1,26 +1,9 @@
 import sys
 import numpy as np
-import NeuralNetwork as clsfr
+import NeuralNetwork as net
 import Dataset as ds
 
 import Node
-
-
-def randomize_dataset(dataset):
-    # This syntax is off the internet, I've no idea what the sytnax
-    reorder = np.random.permutation(len(dataset.data))
-    dataset.data = dataset.data[reorder]
-    dataset.target = dataset.target[reorder]
-
-
-def split_dataset(dataset):
-    # We're doing 70/30 here
-    training_size = round(len(dataset.data) * .7)
-    training_data, test_data = np.split(dataset.data, [training_size])
-    training_targets, test_targets = np.split(dataset.target, [training_size])
-    # Is this ugly? I don't know. Probably.
-    return training_data, test_data, training_targets, test_targets
-
 
 def report_accuracy(test_results, test_targets):
     correct = 0
@@ -32,15 +15,37 @@ def report_accuracy(test_results, test_targets):
 
 
 def main(argv):
-    # Load
-    dataset = ds.Dataset()
-    # dataset.load_from_txts_if_numerical('iris.names.txt', 'iris.data.txt')
-    dataset.load_from_txts_if_numerical('pima-indians-diabetes.names.txt', 'pima-indians-diabetes.data.txt')
 
-    # randomize_dataset(dataset)
-    # training_data, test_data, training_targets, test_targets = split_dataset(dataset)
+    # Load, randomize, set
+    dataset = ds.Dataset()
+    dataset.load_from_txts('iris.names.txt', 'iris.data.txt')
+    # dataset.load_from_txts('pima-indians-diabetes.names.txt', 'pima-indians-diabetes.data.txt')
+    dataset.randomize_data()
+    dataset.split_data()
+    dataset.standardize_data()
 
     # Train, predict
+    neural_net = net.NeuralNetwork()
+    # neural_net.create_network(dataset)
+    # neural_net.compute_results(dataset.training_data[0])
+    # neural_net.fit(dataset)
+
+    # print(dataset.input_count)
+    # print(dataset.target_count)
+    # print(neural_net.network[0].nodes[0].weights)
+    # neural_net.network[0].nodes[0].calculate_output([-1,2,3,4,5,6,7,8,9])
+    # Example
+    # neural_net.create_network(dataset, [4])
+    # neural_net.fit(dataset)
+    # neural_net.compute_results(dataset.training_data[0])
+    neural_net.create_network(dataset, [2, 3])
+    neural_net.create_network(dataset, [5, 3, 9])
+    neural_net.fit(dataset)
+    # print(neural_net.network[0].nodes[0].weights)
+    # print(neural_net.network[1].nodes[0].weights)
+
+    # print([-1] + [2,3,4])
+
     # classifier = clsfr.NeuralNetwork(training_data, training_targets)
     # classifier.create_network()
     # classifier.feed()
@@ -48,8 +53,10 @@ def main(argv):
     # How did we do?
     # report_accuracy(test_results, test_targets)
 
-    node = Node.Node(4)
-    print(node.weights)
+    # node = Node.Node(4)
+    # print(node.weights)
+
+    # We can make
 
     return 0
 

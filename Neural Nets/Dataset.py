@@ -4,69 +4,26 @@ import numpy as np
 class Dataset(object):
     """ Skeletons of a dataset """
 
-    # Is this ugly?
-    def __init__(self, feature_names=np.array([]), target_names=np.array([]),
-                 data=np.array([]), target=np.array([]), DESCR=""):
+    def __init__(self):
+        self.DESCR = ""
+        self.data = np.array([])
+        self.target = np.array([])
+        self.input_count = 0
         self.target_count = 0
-        self.feature_names = feature_names
-        self.target_names = target_names
-        self.data = data
-        self.target = target
-        self.DESCR = DESCR
+        self.training_data = np.array([])
+        self.test_data = np.array([])
+        self.training_targets = np.array([])
+        self.test_targets = np.array([])
+        self.means = np.array([])
+        self.standard_devs = np.array([])
 
-    def set_feature_names(self, feature_names):
-        self.feature_names = feature_names
-
-    def set_target_names(self, target_names):
-        self.target_names = target_names
-
-    def set_data(self, data):
-        self.data = data
-
-    def set_target(self, target):
-        self.target = target
-
-    def set_DESCR(self, DESCR):
-        self.DESCR = DESCR
-
-    def load_from_txts_if_categorical(self, names_file, data_file):
-        with open(names_file) as f:
-            self.DESCR = f.readlines()
-
-        # I transpose completely for my ease of thinking
-        raw_data = np.genfromtxt(data_file, dtype=str, delimiter=',').T
-
-        # Feature key as dict
-        feature_key = {}
-        feature_num = 0
-        for nd_feature in raw_data:
-            cat_value = 0
-            feature = {}
-            for nd_cat in np.unique(nd_feature):
-                feature[str(nd_cat)] = cat_value
-                cat_value += 1
-            feature_key[feature_num] = feature
-            feature_num += 1
-
-        # does order matter? I don't see how we could change this dynamically
-        self.feature_key = feature_key
-
-        for y in range(len(raw_data)):
-            for x in range(len(raw_data[y])):
-                raw_data[y][x] = feature_key[y][str(raw_data[y][x])]
-
-        self.data = raw_data[:len(raw_data) - 1].T.astype(np.float)
-        self.target = raw_data[len(raw_data) - 1:].T.astype(np.float).flatten()
-
-
-        # This kind of is still specific to iris dataset :/
-    def load_from_txts_if_numerical(self, names_file, data_file):
+    def load_from_txts(self, names_file, data_file):
         with open(names_file) as f:
             self.DESCR = f.readlines()
 
         raw_data = np.genfromtxt(data_file, dtype=str, delimiter=',')
 
-        self.data = raw_data[:, :len(raw_data[0])-1].astype(np.float)
+        self.data = raw_data[:, :len(raw_data[0]) - 1].astype(np.float)
 
         raw_targets = raw_data[:, len(raw_data[0]) - 1:]
         target_key = {}
@@ -80,24 +37,29 @@ class Dataset(object):
 
         self.target = raw_targets.astype(np.float).flatten()
 
+    def randomize_data(self):
+        reorder = np.random.permutation(len(self.data))
+        self.data = self.data[reorder]
+        self.target = self.target[reorder]
 
-    def load_dataset_from_iris_csv(self, csv_file):
-        csv = np.genfromtxt(csv_file, dtype=str, delimiter=",")
-        for x in range(len(csv)):
-            for y in range(len(csv[x])):
-                csv[x][y] = csv[x][y].replace("\"", "")
+    def split_data(self, training_percent=70):
+        # Default 70/30, can change
+        training_size = round(len(self.data) * (training_percent / 100))
+        self.training_data, self.test_data = np.split(self.data, [training_size])
+        self.training_targets, self.test_targets = np.split(self.target, [training_size])
 
-        self.feature_names = csv[:1, 1:5]
-        self.target_names = np.array(set(csv[1:, 5:6].flatten()))
-        self.data = csv[1:, 1:5].astype(np.float)
-        self.target = csv[1:, 5:6]
+    def standardize_data(self):
+        standardized_data = self.training_data.T
+        col_means = []
+        col_stds = []
 
-        for index in range(len(self.target)):
-            if self.target[index] == 'setosa':
-                self.target[index] = 0
-            elif self.target[index] == 'versicolor':
-                self.target[index] = 1
-            elif self.target[index] == 'virginica':
-                self.target[index] = 2
-        self.target = self.target.flatten().astype(np.int)
-        self.target_count = len(np.unique(self.target))
+        for x in range(len(standardized_data)):
+            col_means.append(np.mean(standardized_data[x]))
+            col_stds.append(np.std(standardized_data[x]))
+            standardized_data[x] = [(el - col_means[x]) / col_stds[x] for el in standardized_data[x]]
+
+        self.training_data = standardized_data.T
+        self.means = np.array(col_means)
+        self.standard_devs = np.array(col_stds)
+        self.input_count = self.training_data.shape[1]
+        self.target_count = len(np.unique(self.training_targets))

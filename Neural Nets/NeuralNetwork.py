@@ -1,46 +1,52 @@
 import numpy as np
-import Node as node
+import NodeLayer as nl
+
 
 class NeuralNetwork(object):
     """ Hold All The Things! Nodes & Weights & Bros """
 
-    def __init__(self, training_data, training_target):
-        # print("status uuouohashdf")
+    def __init__(self):
+        self.network = []
 
-        # we're going to standardize our data here
-        standardized_data = training_data.T
-        col_means = []
-        col_stds = []
-
-        for x in range(len(standardized_data)):
-            col_means.append(np.mean(standardized_data[x]))
-            col_stds.append(np.std(standardized_data[x]))
-            standardized_data[x] = [(el - col_means[x]) / col_stds[x] for el in standardized_data[x]]
-
-        # print(standardized_data)
-        # print([-1 for x in range(len(standardized_data[0]))])
-
-        self.training_data = standardized_data.T
-        self.training_targets = training_target
-        self.means = np.array(col_means)
-        self.stds = np.array(col_stds)
-        self.input_count = training_data.shape[1]
-        self.target_count = len(np.unique(training_target))
-        # self.network = [] .append for when we need multiple perceptrons
-
-    # This will be more complicated the next time
-    def create_network(self):
+    # pass in array, number of nodes for each layer
+    def create_network(self, dataset, hidden_layers_data=[]):
         """ All nodes will be added to our network. +1 will be added for a bias node """
-        self.network = [node.Node(self.input_count + 1) for x in range(self.target_count)]
 
-    # This is just here to make sure the mechanisms works
-    def feed(self):
-        for row in range(self.training_data.shape[0]):
-            print("testing row {}".format(row))
-            for node in range(len(self.network)):
-                print(self.network[node].calculate_output_h([-1] + self.training_data[row].tolist()))
+        # +1 for the bias nodes
+        if len(hidden_layers_data) == 0:
+            self.network.append(nl.NodeLayer(dataset.target_count, dataset.input_count + 1))
+            return
 
-        # Looks good!
+        for x in range(len(hidden_layers_data)):
+            if x == 0:
+                self.network.append(nl.NodeLayer(hidden_layers_data[x], dataset.input_count + 1))
+            else:
+                self.network.append(nl.NodeLayer(hidden_layers_data[x], len(self.network[x - 1].nodes) + 1))
+
+        self.network.append(nl.NodeLayer(dataset.target_count, len(self.network[len(self.network) - 1].nodes) + 1))
+
+    # We're enforcing a bias -1 input --- Have to call this with each data item
+    def compute_results(self, inputs):
+        working_inputs = []
+        for layer in range(len(self.network)):
+            for node in self.network[layer].nodes:
+                if layer == 0:
+                    node.calculate_output([-1] + inputs.tolist())
+                else:
+                    node.calculate_output([-1] + working_inputs)
+
+            working_inputs = []
+            for node in self.network[layer].nodes:
+                working_inputs.append(node.value)
+
+    def fit(self, dataset):
+        for row in dataset.training_data:
+            self.compute_results(row)
+
+            for node in self.network[len(self.network) - 1].nodes:
+                print(node.value)
+
+            print()
 
     def train(self):
         # train and update weights
