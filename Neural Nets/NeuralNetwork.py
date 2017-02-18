@@ -43,11 +43,6 @@ class NeuralNetwork(object):
         for row in dataset.training_data:
             self.compute_results(row)
 
-            # for node in self.network[len(self.network) - 1].nodes:
-            #     print(node.value)
-            #
-            # print()
-
     def train(self):
         # train and update weights
         return 0

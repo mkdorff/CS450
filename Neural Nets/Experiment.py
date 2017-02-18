@@ -1,5 +1,4 @@
 import sys
-import numpy as np
 import NeuralNetwork as net
 import Dataset as ds
 
