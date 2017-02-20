@@ -38,6 +38,73 @@ class Dataset(object):
 
         self.target = raw_targets.astype(np.float).flatten()
 
+    def load_car(self, names_file, data_file):
+        with open(names_file) as f:
+            self.DESCR = f.readlines()
+
+        # I transpose completely for my ease of thinking
+        raw_data = np.genfromtxt(data_file, dtype=str, delimiter=',').T
+
+        # This makes me sad. Hahaha
+        for y in range(7):
+            if y == 0 or y == 1:
+                for x in range(len(raw_data[y])):
+                    if raw_data[y][x] == 'low':
+                        raw_data[y][x] = 0
+                    elif raw_data[y][x] == 'med':
+                        raw_data[y][x] = 1
+                    elif raw_data[y][x] == 'high':
+                        raw_data[y][x] = 2
+                    else:
+                        raw_data[y][x] = 3
+            elif y == 2:
+                for x in range(len(raw_data[y])):
+                    if raw_data[y][x] == '2':
+                        raw_data[y][x] = 0
+                    elif raw_data[y][x] == '3':
+                        raw_data[y][x] = 1
+                    elif raw_data[y][x] == '4':
+                        raw_data[y][x] = 2
+                    else:
+                        raw_data[y][x] = 3
+            elif y == 3:
+                for x in range(len(raw_data[y])):
+                    if raw_data[y][x] == '2':
+                        raw_data[y][x] = 0
+                    elif raw_data[y][x] == '4':
+                        raw_data[y][x] = 1
+                    else:
+                        raw_data[y][x] = 2
+            elif y == 4:
+                for x in range(len(raw_data[y])):
+                    if raw_data[y][x] == 'small':
+                        raw_data[y][x] = 0
+                    elif raw_data[y][x] == 'med':
+                        raw_data[y][x] = 1
+                    else:
+                        raw_data[y][x] = 2
+            elif y == 5:
+                for x in range(len(raw_data[y])):
+                    if raw_data[y][x] == 'low':
+                        raw_data[y][x] = 0
+                    elif raw_data[y][x] == 'med':
+                        raw_data[y][x] = 1
+                    else:
+                        raw_data[y][x] = 2
+            elif y == 6:
+                for x in range(len(raw_data[y])):
+                    if raw_data[y][x] == 'unacc':
+                        raw_data[y][x] = 0
+                    elif raw_data[y][x] == 'acc':
+                        raw_data[y][x] = 1
+                    elif raw_data[y][x] == 'good':
+                        raw_data[y][x] = 2
+                    else:
+                        raw_data[y][x] = 3
+
+        self.data = raw_data[:len(raw_data) - 1].T.astype(np.float)
+        self.target = raw_data[len(raw_data) - 1:].T.astype(np.float).flatten()
+
     def randomize_data(self):
         reorder = np.random.permutation(len(self.data))
         self.data = self.data[reorder]
