@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/01.iml" filepath="$PROJECT_DIR$/.idea/01.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Decision Tree/.idea/Decision Tree.iml" filepath="$PROJECT_DIR$/../Decision Tree/.idea/Decision Tree.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Neural Nets/.idea/Neural Nets.iml" filepath="$PROJECT_DIR$/../Neural Nets/.idea/Neural Nets.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Testing/.idea/Testing.iml" filepath="$PROJECT_DIR$/../Testing/.idea/Testing.iml" />
       <module fileurl="file://$PROJECT_DIR$/../kNN/.idea/kNN.iml" filepath="$PROJECT_DIR$/../kNN/.idea/kNN.iml" />
