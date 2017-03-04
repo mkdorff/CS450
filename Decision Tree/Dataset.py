@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Dataset(object):
-    """ Skeletons of a dataset """
+    """ All your hopes and dreams come true with Dataset! """
 
     def __init__(self):
         self.DESCR = ""
@@ -50,6 +50,44 @@ class Dataset(object):
         self.input_count = self.training_data.shape[1]
         self.target_count = len(np.unique(self.training_targets))
 
+    def discretize_data(self, sections=30):
+        # inefficient but... ¯\_(ツ)_/¯ Discretize!
+        for col in range(len(self.training_data[0])):
+            low = min(self.training_data[:, col])
+            high = max(self.training_data[:, col])
+            rule = np.arange(low, high, (high - low) / sections)
+
+            for i, item in enumerate(self.training_data[:, col]):
+                if item < rule[0]:
+                    self.training_data[:, col][i] = -1
+                    continue
+                for x, bound in enumerate(rule):
+                    if x == 0:
+                        continue
+                    if item < bound:
+                        self.training_data[:, col][i] = x - 1
+                        break
+                    else:
+                        self.training_data[:, col][i] = x
+                else:
+                    continue
+
+            # Never copy and paste in code, they say
+            for i, item in enumerate(self.test_data[:, col]):
+                if item < rule[0]:
+                    self.test_data[:, col][i] = -1
+                    continue
+                for x, bound in enumerate(rule):
+                    if x == 0:
+                        continue
+                    if item < bound:
+                        self.test_data[:, col][i] = x - 1
+                        break
+                    else:
+                        self.test_data[:, col][i] = x
+                else:
+                    continue
+
     def report_accuracy(self):
         correct = 0
         for i in range(len(self.test_targets)):
@@ -68,17 +106,46 @@ class Dataset(object):
         raw_data = np.genfromtxt("datasets/iris.data.txt", dtype=str, delimiter=',')
 
         self.data = raw_data[:, :len(raw_data[0]) - 1].astype(np.float)
+        self.target = np.array([0 if el == "Iris-setosa" else 2 if el == "Iris-virginica" else 1
+                                for el in raw_data[:, len(raw_data[0]) - 1:].flatten()])
+        self.randomize_data()
+        self.split_data()
+        self.standardize_data()
+        self.discretize_data()
 
-        raw_targets = raw_data[:, len(raw_data[0]) - 1:]
-        target_key = {}
-        target_num = 0
-        for nd_target in np.unique(raw_targets):
-            target_key[str(nd_target)] = target_num
-            target_num += 1
+    def load_lenses(self):
+        with open("datasets/lenses.names.txt") as f:
+            self.DESCR = f.readlines()
 
-        for x in range(len(raw_targets)):
-            raw_targets[x] = target_key[raw_targets[x][0]]
+        raw_data = np.genfromtxt("datasets/lenses.data.txt", dtype=str)[:, 1:]
 
-        self.target = raw_targets.astype(np.float).flatten()
+        self.data = raw_data[:, :len(raw_data[0]) - 1].astype(np.float)
+        self.target = raw_data[:, len(raw_data[0]) - 1:].astype(np.float).flatten()
 
-        # Still got to do the discrete thing
+        self.randomize_data()
+        self.split_data()
+
+    def load_voting(self):
+        with open("datasets/house-votes-84.names.txt") as f:
+            self.DESCR = f.readlines()
+
+        raw_data = np.genfromtxt("datasets/house-votes-84.data.txt", dtype=str, delimiter=',')
+
+        self.data = raw_data[:, 1:]
+        self.target = np.array([0 if el == "republican" else 1 for el in raw_data[:, :1].flatten()])
+
+        self.randomize_data()
+        self.split_data()
+
+    def load_chess(self):
+        with open("datasets/krkopt.info.txt") as f:
+            self.DESCR = f.readlines()
+
+        raw_data = np.genfromtxt("datasets/krkopt.data.txt", dtype=str, delimiter=',')
+
+        self.data = raw_data[:, :len(raw_data[0]) - 1]
+        self.target = raw_data[:, len(raw_data[0]) - 1:].flatten()
+
+        # Maybe we're fine leaving things the way they are
+        self.randomize_data()
+        self.split_data()
