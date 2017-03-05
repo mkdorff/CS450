@@ -7,7 +7,7 @@ def main(argv):
     # Load & Prep
     dataset = ds.Dataset()
     dataset.load_iris()
-    dataset.load_lenses()
+    # dataset.load_lenses()
 
     # Create Tree & Predict
     ID3 = dt.DecisionTree(dataset)
