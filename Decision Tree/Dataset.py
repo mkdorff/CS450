@@ -50,7 +50,7 @@ class Dataset(object):
         self.input_count = self.training_data.shape[1]
         self.target_count = len(np.unique(self.training_targets))
 
-    def discretize_data(self, sections=5):
+    def discretize_data(self, sections=10):
         # inefficient but... ¯\_(ツ)_/¯ Discretize!
         self.rules = []
 

@@ -6,14 +6,14 @@ import DecisionTree as dt
 def main(argv):
     # Load & Prep
     dataset = ds.Dataset()
-    # dataset.load_iris()
+    dataset.load_iris()
     dataset.load_lenses()
 
     # Create Tree & Predict
     ID3 = dt.DecisionTree(dataset)
     ID3.create_tree()
-    # dataset.predicted_targets = ID3.predict_numeric()
-    dataset.predicted_targets = ID3.predict_nominal()
+    dataset.predicted_targets = ID3.predict_numeric()
+    # dataset.predicted_targets = ID3.predict_nominal()
 
     # How did we do?
     dataset.report_accuracy()
