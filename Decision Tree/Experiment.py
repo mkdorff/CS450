@@ -1,31 +1,23 @@
 import sys
 import Dataset as ds
+import DecisionTree as dt
 
-#
-import numpy as np
-import matplotlib.pyplot as plt
 
 def main(argv):
-    # Load & prep
+    # Load & Prep
     dataset = ds.Dataset()
     # dataset.load_iris()
-    # dataset.load_lenses()
-    # dataset.load_voting()
-    dataset.load_chess()
+    dataset.load_lenses()
 
-    # plt.figure()
-    # plt.plot([x + 1 for x in range(len(dataset.temp))], dataset.temp)
-    # plt.plot([x + 1 for x in range(len(dataset.training_data[:, 0]))], dataset.training_data[:, 0])
-    # plt.savefig("graphic.png")
-
-
-    # Train, predict
-
+    # Create Tree & Predict
+    ID3 = dt.DecisionTree(dataset)
+    ID3.create_tree()
+    # dataset.predicted_targets = ID3.predict_numeric()
+    dataset.predicted_targets = ID3.predict_nominal()
 
     # How did we do?
-    # dataset.report_accuracy()
-
-    # Produce some text version of the decision tree here
+    dataset.report_accuracy()
+    ID3.print_tree()
 
     return 0
 

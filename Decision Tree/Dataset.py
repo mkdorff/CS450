@@ -50,12 +50,15 @@ class Dataset(object):
         self.input_count = self.training_data.shape[1]
         self.target_count = len(np.unique(self.training_targets))
 
-    def discretize_data(self, sections=30):
+    def discretize_data(self, sections=5):
         # inefficient but... ¯\_(ツ)_/¯ Discretize!
+        self.rules = []
+
         for col in range(len(self.training_data[0])):
             low = min(self.training_data[:, col])
             high = max(self.training_data[:, col])
             rule = np.arange(low, high, (high - low) / sections)
+            self.rules.append(rule)
 
             for i, item in enumerate(self.training_data[:, col]):
                 if item < rule[0]:
@@ -126,10 +129,12 @@ class Dataset(object):
         self.split_data()
 
     def load_voting(self):
+        # I've hit some stupid wall with this one too. I just don't know
         with open("datasets/house-votes-84.names.txt") as f:
             self.DESCR = f.readlines()
 
         raw_data = np.genfromtxt("datasets/house-votes-84.data.txt", dtype=str, delimiter=',')
+
 
         self.data = raw_data[:, 1:]
         self.target = np.array([0 if el == "republican" else 1 for el in raw_data[:, :1].flatten()])
@@ -138,6 +143,7 @@ class Dataset(object):
         self.split_data()
 
     def load_chess(self):
+        # This one don't work with the things
         with open("datasets/krkopt.info.txt") as f:
             self.DESCR = f.readlines()
 
