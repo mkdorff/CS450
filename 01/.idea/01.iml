@@ -8,6 +8,7 @@
     <orderEntry type="module" module-name="Neural Nets" />
     <orderEntry type="module" module-name="Testing" />
     <orderEntry type="module" module-name="Decision Tree" />
+    <orderEntry type="module" module-name="Ensemble" />
   </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="Unittests" />
