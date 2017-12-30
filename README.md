@@ -4,7 +4,7 @@ I had to do a bunch of different machine learning/dating mining algorithms for t
 
 - k Nearest Neighbors
 - Decision Trees
-- Nerual Networks (Multilayer Perceptrons)
+- Neural Networks (Multilayer Perceptrons)
 - Apriori
 - Clustering
 - Social Networking Analysis
